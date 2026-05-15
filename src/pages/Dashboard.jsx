@@ -29,25 +29,33 @@ export default function Dashboard() {
     orders: 0,
     growth: '+0%'
   });
+  const [recentUsers, setRecentUsers] = useState([]);
 
   useEffect(() => {
-    async function fetchStats() {
+    async function fetchData() {
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/stats`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const headers = { Authorization: `Bearer ${token}` };
+        
+        const [statsRes, usersRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_URL}/api/users/stats`, { headers }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/users`, { headers })
+        ]);
+
         setStats({
-          totalUsers: data.totalUsers,
-          revenue: `$${data.revenue.toLocaleString()}`,
-          orders: data.orders,
-          growth: data.growth
+          totalUsers: statsRes.data.totalUsers,
+          revenue: `$${statsRes.data.revenue.toLocaleString()}`,
+          orders: statsRes.data.orders,
+          growth: statsRes.data.growth
         });
+        
+        // Get the latest 5 users
+        setRecentUsers(usersRes.data.slice(0, 5));
       } catch (err) {
-        console.error("Error fetching stats", err);
+        console.error("Error fetching dashboard data", err);
       }
     }
-    fetchStats();
+    fetchData();
   }, []);
 
   return (
@@ -74,9 +82,46 @@ export default function Dashboard() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-8 bg-surface border border-border rounded-xl p-6 h-64 flex items-center justify-center"
+        className="mt-8 bg-surface border border-border rounded-xl overflow-hidden"
       >
-        <p className="text-gray-500 font-mono">ACTIVITY_CHART_PLACEHOLDER [Initializing...]</p>
+        <div className="p-6 border-b border-border bg-surface flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white flex items-center">
+            <Users className="w-5 h-5 mr-2 text-primary" />
+            Recent Users
+          </h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-background/50 border-b border-border text-xs uppercase tracking-wider text-gray-500">
+                <th className="p-4 font-medium">Name</th>
+                <th className="p-4 font-medium">Email</th>
+                <th className="p-4 font-medium">Phone</th>
+                <th className="p-4 font-medium">Joined</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/50 text-sm">
+              {recentUsers.map((user) => (
+                <tr key={user.id} className="hover:bg-background/30 transition-colors">
+                  <td className="p-4 font-medium text-white flex items-center">
+                    <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center mr-3 font-bold text-xs border border-primary/30">
+                      {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+                    </div>
+                    {user.name || 'Unknown'}
+                  </td>
+                  <td className="p-4 text-gray-400">{user.email}</td>
+                  <td className="p-4 text-gray-400">{user.phone || 'Not provided'}</td>
+                  <td className="p-4 text-gray-400">{new Date(user.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+              {recentUsers.length === 0 && (
+                <tr>
+                  <td colSpan="4" className="p-8 text-center text-gray-500">No users found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </motion.div>
     </div>
   );

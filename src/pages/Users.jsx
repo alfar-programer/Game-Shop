@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Search, ChevronRight } from 'lucide-react';
+import { Search, ChevronRight, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Users() {
@@ -65,6 +65,10 @@ export default function Users() {
                 <div className="space-y-1 relative z-10">
                   <h3 className="font-bold text-white text-lg truncate">{user.name || 'Unknown User'}</h3>
                   <p className="text-gray-400 text-sm truncate">{user.email}</p>
+                  <p className="text-gray-400 text-xs flex items-center mt-1">
+                    <Phone className="w-3 h-3 mr-1" />
+                    {user.phone || 'Not provided'}
+                  </p>
                 </div>
                 
                 <div className="mt-4 pt-4 border-t border-border/50 flex items-center justify-between text-xs text-gray-500 relative z-10">
