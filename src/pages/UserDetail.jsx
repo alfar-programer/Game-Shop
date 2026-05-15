@@ -15,7 +15,7 @@ export default function UserDetail() {
     async function fetchUser() {
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get(`http://localhost:5000/api/users/${id}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUser(data);

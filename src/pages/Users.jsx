@@ -12,7 +12,7 @@ export default function Users() {
     async function fetchUsers() {
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get('http://localhost:5000/api/users', {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUsers(data);
