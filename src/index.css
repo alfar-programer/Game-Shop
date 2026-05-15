@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0b0c10;
+  --color-surface: #1f2833;
+  --color-primary: #66fcf1;
+  --color-accent: #ff00ff;
+  --color-border: #333333;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: #c5c6c7;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .neon-text-primary {
+    text-shadow: 0 0 5px var(--color-primary), 0 0 10px var(--color-primary);
+  }
+  .neon-text-accent {
+    text-shadow: 0 0 5px var(--color-accent), 0 0 10px var(--color-accent);
+  }
+  .neon-box-primary {
+    box-shadow: 0 0 10px var(--color-primary), inset 0 0 10px var(--color-primary);
+  }
+  .neon-box-accent {
+    box-shadow: 0 0 10px var(--color-accent), inset 0 0 10px var(--color-accent);
+  }
+}
